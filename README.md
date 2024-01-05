@@ -9,13 +9,13 @@ because it is not a super popular framework. That is why I decided to use it.
 # Currently Implemented
 
 - CNNs:
-  -[x] LeNet
-  -[x] AlexNet
-  -[x] VGG
-  -[x] NiN
-  -[] GoogleLeNet
-  -[] ResNet
-  -[] DenseNet
+  - [X] LeNet
+  - [X] AlexNet
+  - [X] VGG
+  - [X] NiN
+  - [ ] GoogleLeNet
+  - [ ] ResNet
+  - [ ] DenseNet
 
 I am using a conda environment and to activate it use:
 
