@@ -9,6 +9,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
+from trainer import Trainer
+
 class AlexNet:
     def __init__(self, num_classes=10):
        self.layers = [
@@ -33,47 +35,23 @@ class AlexNet:
         return x.sequential(self.layers)#.realize()
 
 net = AlexNet()
-optim = nn.optim.Adam(nn.state.get_parameters(net))
-X_train, y_train, X_test, y_test = fetch_mnist(tensors=True)
+train = True
 
-X_train = X_train.numpy()
-y_train = y_train.numpy()
-X_test = X_test.numpy()
-y_test = y_test.numpy()
-
-state_dict = nn.state.safe_load("AlexNet.safetensor")
-nn.state.load_state_dict(net, state_dict)
-
-if False:
-    with Tensor.train():
-        for step in trange(1000):
-            samp = np.random.randint(0, X_train.shape[0], size=(32))
-            batch = X_train[samp]
-            # Define the target size (224x224)
-            target_size = (224, 224)
-
-            # Resize and interpolate because alexnet used 224*224 images 8 times bigger than MNIST
-            batch = F.interpolate(torch.tensor(batch), size=target_size, mode='bilinear', align_corners=False)
-            batch = Tensor(batch.numpy(), requires_grad=False)
-            labels = Tensor(y_train[samp])
-            out = net(batch)
-            loss = out.sparse_categorical_crossentropy(labels)
-            optim.zero_grad()
-            loss.backward()
-
-            optim.step()
-            pred = out.argmax(axis=-1)
-            acc = (pred == labels).mean()
-
-            if step % 100 == 0:
-                print(f"step {step}, {loss.numpy()=}, {acc.numpy()=}")
-
-        state_dict = nn.state.get_state_dict(net)
-        nn.state.safe_save(state_dict, "AlexNet.safetensor")
+if train:
+    trainer = Trainer(net=net, net_name='alexNet')
+    net = trainer.train(resize=True, epochs=1, target_size=(224, 224))
+else:
+    state_dict = nn.state.safe_load("AlexNet.safetensor")
+    nn.state.load_state_dict(net, state_dict)
 
 @TinyJit
 def jit(x):
     return net(x).realize()
+
+_, _, X_test, y_test = fetch_mnist(tensors=True)
+X_test = X_test.numpy()
+y_test = y_test.numpy()
+
 
 with Timing("Time: "):
     avg_acc = 0

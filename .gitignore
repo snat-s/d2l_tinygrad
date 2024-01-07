@@ -1,4 +1,5 @@
 tinygrad/
+./GANs/pokemon
 *.safetensor
 
 # Byte-compiled / optimized / DLL files

@@ -7,6 +7,7 @@ from tinygrad.helpers import Timing
 from extra.datasets import fetch_mnist
 from tqdm import trange
 import numpy as np
+from trainer import Trainer
 
 class LeNet:
     def __init__(self, num_classes=10):
@@ -21,40 +22,23 @@ class LeNet:
                 nn.Linear(120, 84), Tensor.sigmoid, 
                 nn.Linear(84, num_classes)
                 ]
-
+    #@TinyJit
     def __call__(self, x):
-        return x.sequential(self.layers)
+        return x.sequential(self.layers)#.realize()
 
 net = LeNet()
-optim = nn.optim.Adam(nn.state.get_parameters(net))
 X_train, y_train, X_test, y_test = fetch_mnist(tensors=True)
-
-X_train = X_train.numpy()
-y_train = y_train.numpy()
 X_test = X_test.numpy()
 y_test = y_test.numpy()
 
-state_dict = nn.state.safe_load("LeNetMax.safetensor")
-nn.state.load_state_dict(net, state_dict)
-if False:
-    with Tensor.train():
-        for step in trange(1000):
-            samp = np.random.randint(0, X_train.shape[0], size=(64))
-            batch = Tensor(X_train[samp], requires_grad=False)
-            labels = Tensor(y_train[samp])
-            out = net(batch)
-            loss = out.sparse_categorical_crossentropy(labels)
-            optim.zero_grad()
-            loss.backward()
-            optim.step()
-            pred = out.argmax(axis=-1)
-            acc = (pred == labels).mean()
+train = False
 
-            if step % 100 == 0:
-                print(f"step {step}, {loss.numpy()=}, {acc.numpy()=}")
-
-    state_dict = nn.state.get_state_dict(net)
-    nn.state.safe_save(state_dict, "LeNetMaxReLu.safetensor")
+if train:
+    trainer = Trainer(net=net, net_name='LeNetMax')
+    net = trainer.train(resize=False)
+else:
+    state_dict = nn.state.safe_load("./models/LeNetMax.safetensor")
+    nn.state.load_state_dict(net, state_dict)
 
 @TinyJit
 def jit(x):

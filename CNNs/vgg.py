@@ -10,6 +10,7 @@ from tqdm import trange
 import numpy as np
 import torch
 import torch.nn.functional as F
+from trainer import Trainer
 
 class VGGBlock:
     def __init__(self, in_channels, out_channels, num_convs):
@@ -40,48 +41,20 @@ class VGG:
 #net = VGG(architecture=((1,1,64), (1,64,128), (2, 128, 256), (2, 256, 512), (2, 512, 512)))
 # Implemented and trained in d2l
 net = VGG(architecture=((1,1,16), (1,16,32),(2,32,64), (2,64,128),(2,128,128)))
-
-optim = nn.optim.Adam(nn.state.get_parameters(net))
 X_train, y_train, X_test, y_test = fetch_mnist(tensors=True)
 
-X_train = X_train.numpy()
-y_train = y_train.numpy()
 X_test = X_test.numpy()
 y_test = y_test.numpy()
 
-state_dict = nn.state.safe_load("VGG11.safetensor")
-nn.state.load_state_dict(net, state_dict)
+train = False
 
-if False:
-    with Tensor.train():
-        for step in trange(1000):
-            samp = np.random.randint(0, X_train.shape[0], size=(32))
-            batch = X_train[samp]
-            # Define the target size (224x224)
-            target_size = (224, 224)
-            # Resize and interpolate because alexnet used 224*224 images 8 times bigger than MNIST
-            batch = F.interpolate(torch.tensor(batch), size=target_size, mode='bilinear', align_corners=False)
-            batch = Tensor(batch.numpy(), requires_grad=False)
-            labels = Tensor(y_train[samp])
-            out = net(batch)
-            loss = out.sparse_categorical_crossentropy(labels)
-            optim.zero_grad()
-            loss.backward()
+if train:
+    trainer = Trainer(net=net, net_name='VGG11')
+    net = trainer.train(resize=True, target_size=(224, 224))
+else:
+    state_dict = nn.state.safe_load("./models/VGG11.safetensor")
+    nn.state.load_state_dict(net, state_dict)
 
-            optim.step()
-            pred = out.argmax(axis=-1)
-            acc = (pred == labels).mean()
-
-            if step % 100 == 0:
-                print(f"step {step}, {loss.numpy()=}, {acc.numpy()=}")
-
-        state_dict = nn.state.get_state_dict(net)
-        nn.state.safe_save(state_dict, "VGG11.safetensor")
-parameters = nn.state.get_parameters(net)
-n_parameters = 0
-for layer in parameters:
-    n_parameters += len(layer.numpy())
-print(n_parameters)
 
 @TinyJit
 def jit(x):
