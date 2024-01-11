@@ -14,9 +14,16 @@ because it is not a super popular framework. That is why I decided to use it.
   - [X] VGG
   - [X] NiN
   - [ ] GoogleLeNet
-  - [ ] ResNet
+  - [X] ResNet
   - [ ] DenseNet
 
+- RNNs:
+  - [ ] LSTM
+  - [ ] GRU 
+
+- GANs:
+  - [ ] tabular
+  - [ ] DCGANS
 I am using a conda environment and to activate it use:
 
 ```bash

@@ -1,7 +1,6 @@
 # VGG is the first family of CNNs
 # The part of VGG is that it still needs a lot for the fully connected network at the end
 from tinygrad import nn
-from tinygrad.helpers import flatten
 from tinygrad import Tensor
 from tinygrad.jit import TinyJit
 from tinygrad.helpers import Timing
