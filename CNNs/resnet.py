@@ -81,13 +81,13 @@ class ResNet18(ResNet):
 net = ResNet18()
 X = Tensor.randn((1, 1, 96, 96))
 
-train = False 
+train = True 
 target_size = (96,96)
 print(net(X).shape)
 
 if train:
    trainer = Trainer(net=net,net_name='resnet18')
-   net = trainer.train(resize=True, target_size=target_size)
+   net = trainer.train(resize=True, target_size=target_size, epochs=1)
 else:
     state_dict = nn.state.safe_load("./models/resnet18.safetensor")
     nn.state.load_state_dict(net, state_dict)
