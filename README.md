@@ -3,8 +3,7 @@
 ![anime waifu studying lol](./assets/anime_40.jpeg)
 
 This are basically my notes on d2l. I wanted to use tinygrad to challenge
-myself and learn it. There is basically no information from tinygrad online
-because it is not a super popular framework. That is why I decided to use it.
+myself and learn a new framework. 
 
 # Currently Implemented
 
@@ -24,9 +23,11 @@ because it is not a super popular framework. That is why I decided to use it.
 - GANs:
   - [ ] tabular
   - [ ] DCGANS
+
 I am using a conda environment and to activate it use:
 
 ```bash
 conda activate d2l_tinygrad
 ```
-I am using some dependencies, the following are what you should install: `matplotlib`, `tqdm`, `numpy` and of course `tinygrad`
+
+I am using some dependencies, the following are what you should install: `matplotlib`, `tqdm`, `numpy`,`datasets` and of course `tinygrad`
